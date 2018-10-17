@@ -46,27 +46,27 @@ int main()
 	int mileage = endOdometer - startOdometer;
 	if (startOdometer < 0) 
 	{
-		cout << "The starting odometer reading must be nonnegative";
+		cout << "The starting odometer reading must be nonnegative.";
 	}
 	else if (mileage < 0) 
 	{
-		cout << "The final odometer reading must be at least as large as the starting reading";
+		cout << "The final odometer reading must be at least as large as the starting reading.";
 	}
 	else if (rentalDays <= 0) 
 	{
-		cout << "The number of rental days must be positive";
+		cout << "The number of rental days must be positive.";
 	}
-	else if (clientName.compare("") == 0) 
+	else if (clientName == "") 
 	{
-		cout << "You must enter a customer name";
+		cout << "You must enter a customer name.";
 	}
 	else if (luxuryCar != 'y' && luxuryCar != 'n') 
 	{
-		cout << "You must enter y or n";
+		cout << "You must enter y or n.";
 	}
 	else if (month < 1 || month > 12)
 	{
-		cout << "The month number must be in the range 1 through 12";
+		cout << "The month number must be in the range 1 through 12.";
 	}
 	else  
 	{
@@ -82,7 +82,7 @@ int main()
 
 		if (mileage < firstTier) 
 		{
-			totalCharge = mileage * normMileageRate;
+			totalCharge += mileage * normMileageRate;
 		}
 			
 		else if (mileage > firstTier && mileage < secondTier) {
@@ -95,7 +95,7 @@ int main()
 				totalCharge += mileage * nonWinterRate;
 			}
 		}
-		else if (mileage > secondTier) {
+		else {
 			totalCharge += firstTier * normMileageRate;
 			if (month == 12 || (month >= 1 && month <= 3)) {
 				totalCharge += secondTier * winterRate;
