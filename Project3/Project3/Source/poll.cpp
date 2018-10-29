@@ -122,17 +122,17 @@ int tallySeats(string pollData, char party, int& seatTally) {
 	if (!isalpha(party)) {
 		return 2;
 	}
+	seatTally = 0;
 	for (int i = 2; i != pollData.size(); i++) {
 		if (toupper(pollData[i]) == toupper(party) && (i == pollData.size()-1 || pollData[i+1] == ',' || (!isalpha(pollData[i-1]) && !isalpha(pollData[i+1])))) 
 		{
 			int readNumber = 0;
 			int j = i-1;
 			int power = 0;
-			if (isdigit(pollData[i - 2])) {
-				readNumber += ((pollData[i-2] - zero) * 10) + (pollData[i-1]-zero);
-			}
-			else {
-				readNumber += pollData[i-1] - zero;
+			while (isdigit(pollData[j]) && power <=2) {
+				readNumber += (pollData[j] - zero) * pow(10, power);
+				power++;
+				j--;
 			}
 			seatTally += readNumber; 
 			//conversion from double to int may cause mathematical inaccuracy 
@@ -211,7 +211,7 @@ int main() {
 	assert(tallySeats("Ca53D0R,Or7D2I2R,wA6i9R20d", 'i', startSeat) == 0 && startSeat == 8);
 	cout << "Test 2.8 passed" << endl;
 	int s = -888;
-	assert(tallySeats("Ca23D34R,iA33r9D,wy23D9R", 'R', s) == 0 && s == -812);
+	assert(tallySeats("ct5d,ny9r17d1i",'d',s) == 0 && s == 22);
 	cout << "Test 2.9 passed" << endl;
 	cout << "All tests clear"; 
 	
