@@ -54,12 +54,17 @@ bool hasInvalidCharacters(string s) {
 	return false;
 }
 
-bool hasProperPollResult(string pollData) {
+//return true if party results are valid
+//return false otherwise
+bool hasProperPartyResult(string pollData) {
 	if (pollData == "") {
 		return true;
 	}
 	for (int i = 1; i != pollData.size(); i++) {
-		if (isalpha(pollData[i]) && (i == pollData.size() - 1 || pollData[i + 1] == ',' || (!isalpha(pollData[i - 1]) && !isalpha(pollData[i + 1]))))
+		if (isalpha(pollData[i]) && isalpha(pollData[i + 1]) && pollData[i - 1] != ',') {
+			return false;
+		}
+		if (isalpha(pollData[i]) && (i == pollData.size() - 1 || pollData[i + 1] == ',' || (!isalpha(pollData[i - 1]) && !isalpha(pollData[i + 1])))) //make sure handles a poll result of zero numbers e.g. cA8RD
 		{
 			int j = i - 1;
 			int countDigits = 0;
@@ -71,17 +76,21 @@ bool hasProperPollResult(string pollData) {
 			if (countDigits > 2)
 				return false;
 		}
+		if (isdigit(pollData[i]) && (i == pollData.size() - 1 || pollData[i + 1] == ',')) 
+		{
+			return false;
+		}
 	}
 	return true;
 }
  
 //Returns true if a poll string is written with proper syntax
 //false otherwise
-bool hasProperSyntax(string pollData) { //debugged
+bool hasProperSyntax(string pollData) {
 	if (hasInvalidCharacters(pollData)) {
 		return false;
 	}
-	if (pollData.size() == 1) {
+	if (pollData.size() == 1) { //protects against undefined behavior
 		return false;
 	}
 		int i = 0;
@@ -104,7 +113,7 @@ bool hasProperSyntax(string pollData) { //debugged
 			}
 			i++;
 		}
-		if (!hasProperPollResult(pollData)) {
+		if (!hasProperPartyResult(pollData)) {
 			return false;
 		}
 		return true;
@@ -123,7 +132,8 @@ int tallySeats(string pollData, char party, int& seatTally) {
 		return 2;
 	}
 	seatTally = 0;
-	for (int i = 2; i != pollData.size(); i++) {
+	for (int i = 2; i < pollData.size(); i++) {
+		//find party code if it is not part of a state code
 		if (toupper(pollData[i]) == toupper(party) && (i == pollData.size()-1 || pollData[i+1] == ',' || (!isalpha(pollData[i-1]) && !isalpha(pollData[i+1])))) 
 		{
 			int readNumber = 0;
@@ -162,7 +172,8 @@ int main() {
 	cout << "Which party?";
 	cin >> party;
 	tallySeats(pollData, party, startingNum);
-	cout << startingNum; */
+	cout << "tallySeats returns " << int(tallySeats) << endl;
+	cout << "Total seats won by " << char(toupper(party)) << " is " << startingNum; */
 
 	assert(hasProperSyntax("Ny23D8R"));
 	cout << "Test 1.1 passed" << endl;
@@ -190,6 +201,8 @@ int main() {
 	cout << "Test 1.12 passed" << endl;
 	assert(!hasProperSyntax("ca2310D"));
 	cout << "Test 1.13 passed" << endl;
+	assert(!hasProperSyntax("Ca3DR"));
+	cout << "Test 1.14 passed" << endl;
 	cout << "CHECKPOINT 1 PASSED" << endl; 
 	int startSeat = 0;
 	assert(tallySeats("24R2D,VT23", 'D', startSeat) == 1 && startSeat == 0);
@@ -213,7 +226,20 @@ int main() {
 	int s = -888;
 	assert(tallySeats("ct5d,ny9r17d1i",'d',s) == 0 && s == 22);
 	cout << "Test 2.9 passed" << endl;
+	assert(tallySeats("", 'i', s) == 0 && s == 0);
+	cout << "Test 2.10 passed" << endl;
+	s = -888;
+	assert(tallySeats("!", 'e', s) == 1 && s == -888);
+	cout << "Test 2.11 passed" << endl;
+	s = 27;
+	assert(tallySeats("nY1298D65r",'r',s) == 1 && s == 27);
+	cout << "Test 2.12 passed" << endl;
+	assert(tallySeats("Vt82D", '!', s) == 2 && s == 27);
+	cout << "Test 2.13 passed" << endl; 
+	assert(tallySeats("va12,iA12r", 'r', s) == 1 && s == 27);
+	cout << "Test 2.14 passed" << endl;
+	assert(tallySeats("va12diA12r", 'r', s) == 1 && s == 27);
+	cout << "Test 2.15 passed" << endl;
 	cout << "All tests clear"; 
 	
-
 }
